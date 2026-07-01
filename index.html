@@ -42,11 +42,11 @@
   }
   button:hover{ border-color: var(--accent); }
   button.primary{ background: var(--accent); color:#001018; border-color: var(--accent); font-weight:600; }
-  button.danger{ color: var(--bad); }
+  button.danger{ color: var(--bad); border-color: transparent; }
+  button.danger:hover{ border-color: var(--bad); }
   button:disabled{ opacity:.4; cursor:not-allowed; }
-  label.fld{ display:flex; flex-direction:column; gap:4px; font-size:11px; color:#9aa3af; }
   input[type=range]{ width:140px; }
-  input[type=text]{ background:var(--panel); color:var(--fg); border:1px solid var(--border); border-radius:6px; padding:6px 8px; }
+  input[type=text], input[type=number]{ background:var(--panel); color:var(--fg); border:1px solid var(--border); border-radius:6px; padding:6px 8px; }
 
   /* ---- 非対応ブラウザ警告 ---- */
   #unsupported{
@@ -58,43 +58,21 @@
 
   /* ---- レイアウト ---- */
   #app{ display:flex; flex-direction:column; height:100%; }
-  #toolbar{
-    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-    padding:8px 12px; background:var(--panel); border-bottom:1px solid var(--border);
-    z-index:30;
-  }
-  #toolbar .sep{ width:1px; height:24px; background:var(--border); margin:0 4px; }
-  #toolbar .title{ font-weight:700; font-size:14px; margin-right:8px; }
-  #toolbar .spacer{ flex:1; }
-
+  
   #main{ flex:1; position:relative; overflow:hidden; }
 
   /* ---- 編集モード ---- */
   #editor{
-    position:absolute; inset:0; display:flex; gap:12px; padding:12px;
+    position:absolute; inset:0; display:flex; padding:12px;
     background:var(--panel);
   }
   #editor.hidden{ display:none; }
-  #scriptList{
-    width:240px; flex-shrink:0; display:flex; flex-direction:column; gap:8px;
-    border:1px solid var(--border); border-radius:10px; padding:10px; background:var(--panel2);
-    overflow:auto;
-  }
-  #scriptList h3{ margin:0 0 4px; font-size:12px; color:#9aa3af; }
-  .savedItem{
-    display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:6px;
-    background:var(--panel); border:1px solid var(--border); font-size:12px;
-  }
-  .savedItem .nm{ flex:1; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .savedItem .nm:hover{ color:var(--accent); }
-  .savedItem button{ padding:2px 6px; font-size:11px; }
-  #editorRight{ flex:1; display:flex; flex-direction:column; gap:8px; }
+  
   #editArea{
-    flex:1; width:100%; resize:none; background:var(--bg); color:var(--fg);
+    flex:1; width:100%; height:100%; resize:none; background:var(--bg); color:var(--fg);
     border:1px solid var(--border); border-radius:10px; padding:16px;
     font-size:18px; line-height:1.7;
   }
-  #editorRight .row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
   /* ---- プロンプターモード ---- */
   #prompter{
@@ -106,7 +84,6 @@
     padding: 0 var(--margin, 8%);
     scroll-behavior:auto;
   }
-  /* 上下に余白を入れ、先頭/末尾もガイドライン位置に来られるように */
   #scriptText{
     white-space:pre-wrap; word-break:break-word;
     font-size: var(--fs, 40px);
@@ -114,15 +91,13 @@
     color: var(--dim);
     padding: 45vh 0 60vh;
   }
-  /* 水平ミラーモード：物理プロンプターのハーフミラー反射に合わせ左右反転 */
   #scriptText.mirror-mode{ transform: scaleX(-1); transform-origin: center; }
   #scriptText span{ color: var(--dim); transition: color .15s linear; }
-  #scriptText span.read{ color: var(--dim); }   /* 読み終わり：暗いまま */
-  #scriptText span.ahead{ color: var(--fg); }    /* これから読む：明るい */
+  #scriptText span.read{ color: var(--dim); }
+  #scriptText span.ahead{ color: var(--fg); }
   #scriptText span.current{
     color:#fff; background: rgba(56,189,248,.28); border-radius:3px;
   }
-  /* スライド送りマーカー（##）の表示 */
   #scriptText span.marker{
     color: var(--warn); opacity:.85; font-weight:700;
   }
@@ -130,7 +105,7 @@
     color: var(--ok); opacity:.6;
   }
 
-  /* ガイドライン（今読む位置） */
+  /* ガイドライン */
   #guideline{
     position:absolute; left:0; right:0; top:45vh; height:0;
     border-top:2px solid var(--guide); pointer-events:none; z-index:5;
@@ -141,7 +116,6 @@
   }
   #guideline.hidden{ display:none; }
 
-  /* ミラーモード中バッジ（全画面でも見えるよう #prompter 内に配置） */
   #mirrorBadge{
     position:absolute; top:10px; left:50%; transform:translateX(-50%);
     z-index:6; display:none;
@@ -151,13 +125,22 @@
     pointer-events:none;
   }
   #mirrorBadge.show{ display:block; }
-  /* ボタンのアクティブ表示 */
   button.active{ background:var(--accent); color:#001018; border-color:var(--accent); font-weight:600; }
+
+  /* ---- ツールバー共通 ---- */
+  .toolbar{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    padding:8px 12px; background:var(--panel); border-top:1px solid var(--border);
+    z-index:30;
+  }
+  .toolbar.hidden { display: none !important; }
+  .toolbar .sep{ width:1px; height:24px; background:var(--border); margin:0 4px; }
+  .toolbar .spacer{ flex:1; }
 
   /* ---- ステータスバー ---- */
   #statusbar{
     display:flex; align-items:center; gap:12px; flex-wrap:wrap;
-    padding:6px 12px; background:var(--panel); border-top:1px solid var(--border);
+    padding:6px 12px; background:var(--panel2); border-top:1px solid var(--border);
     font-size:12px; z-index:30;
   }
   #micState{ display:flex; align-items:center; gap:6px; }
@@ -165,13 +148,41 @@
   .dot.on{ background:var(--ok); box-shadow:0 0 8px var(--ok); }
   .dot.err{ background:var(--bad); }
   #confWrap{ display:flex; align-items:center; gap:6px; }
-  #confBar{ width:160px; height:10px; background:var(--panel2); border-radius:6px; overflow:hidden; border:1px solid var(--border); }
+  #confBar{ width:160px; height:10px; background:var(--panel); border-radius:6px; overflow:hidden; border:1px solid var(--border); }
   #confFill{ height:100%; width:0%; background:var(--bad); transition:width .12s linear, background .2s; }
   #debugBox{
     flex:1; min-width:200px; color:#9aa3af; font-size:11px;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
   #debugBox.hidden{ display:none; }
+
+  /* ---- モーダル（台本を開く） ---- */
+  #scriptModal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    display: flex; align-items: center; justify-content: center; z-index: 100;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  #scriptModal.show { opacity: 1; pointer-events: auto; }
+  .modal-content {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    width: 480px; max-width: 90%; max-height: 80vh; display: flex; flex-direction: column;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--panel2);
+    border-radius: 12px 12px 0 0;
+  }
+  .modal-header h3 { margin: 0; font-size: 15px; color: var(--fg); }
+  .modal-body { padding: 16px; overflow-y: auto; flex: 1; display:flex; flex-direction:column; gap:8px;}
+  .savedItem{
+    display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px;
+    background:var(--panel2); border:1px solid var(--border); font-size:13px;
+    transition: border-color 0.15s;
+  }
+  .savedItem:hover { border-color: var(--accent); }
+  .savedItem .nm{ flex:1; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600;}
+  .savedItem .nm:hover{ color:var(--accent); }
 
   /* ---- 設定パネル ---- */
   #settings{
@@ -192,7 +203,6 @@
 </head>
 <body>
 
-<!-- 非対応ブラウザ用のフルスクリーン警告 -->
 <div id="unsupported">
   <h1>このブラウザは音声認識に対応していません</h1>
   <p>本アプリは Web Speech API（webkitSpeechRecognition）を使用します。<br>
@@ -202,53 +212,12 @@
 
 <div id="app">
 
-  <!-- ============ ツールバー ============ -->
-  <div id="toolbar">
-    <span class="title">🎤 音声追従テレプロンプター</span>
-    <button id="modeBtn" class="primary">▶ 本番モードへ</button>
-    <span class="sep"></span>
-    <button id="startBtn" disabled>開始 (Space)</button>
-    <button id="pauseBtn" disabled>一時停止</button>
-    <button id="resetBtn" disabled>リセット</button>
-    <span class="sep"></span>
-    <button id="slidePrevBtn" title="スライドを手動で1つ戻す（[ キー）" disabled>◀ スライド</button>
-    <button id="slideNextBtn" title="スライドを手動で1つ進める（] キー）" disabled>スライド ▶</button>
-    <span class="sep"></span>
-    <button id="mirrorBtn" title="物理プロンプター用に左右反転">↔ ミラーモード</button>
-    <button id="fsBtn">⛶ 全画面</button>
-    <button id="settingsBtn">⚙ 設定</button>
-    <span class="spacer"></span>
-    <span id="hintBar" class="hint">編集モード：台本を入力して「本番モードへ」</span>
-  </div>
-
-  <!-- ============ メイン ============ -->
   <div id="main">
 
-    <!-- 編集モード -->
     <div id="editor">
-      <div id="scriptList">
-        <h3>保存済み台本 (IndexedDB)</h3>
-        <div id="savedItems"></div>
-      </div>
-      <div id="editorRight">
-        <div class="row">
-          <input type="text" id="scriptName" placeholder="台本名を入力" style="flex:1;min-width:120px;">
-          <button id="saveBtn">💾 保存</button>
-          <button id="newBtn">＋ 新規</button>
-          <span class="hint">改行・段落はそのまま表示されます。台本に <kbd>S01</kbd> <kbd>S02</kbd>… と書いた位置を通過すると、その番号の画像（S01→1枚目）に切り替わります。</span>
-        </div>
-        <div class="row" id="slideRow">
-          <input type="file" id="slideInput" accept="image/*" multiple style="display:none;">
-          <button id="pickSlidesBtn">🖼 スライド画像を選択</button>
-          <button id="openSlideWinBtn">🪟 スライド窓を開く</button>
-          <button id="testNextBtn" title="動作確認用：手動で次のスライドへ">▶ 次へ(テスト)</button>
-          <span class="hint" id="slideInfo">画像未選択</span>
-        </div>
-        <textarea id="editArea" placeholder="ここに台本を貼り付け／入力してください。&#10;&#10;例）S01 こんにちは。今日は音声追従型テレプロンプターのデモをお見せします。&#10;（S01 を通過した時点で1枚目の画像が表示されます）&#10;S02 このアプリは、私が今喋っている言葉をマイクで認識して…（ここで2枚目に切替）"></textarea>
-      </div>
+      <textarea id="editArea" placeholder="ここに台本を貼り付け／入力してください。&#10;&#10;例）S01 こんにちは。今日は音声追従型テレプロンプターのデモをお見せします。&#10;（S01 を通過した時点で1枚目の画像が表示されます）&#10;S02 このアプリは、私が今喋っている言葉をマイクで認識して…（ここで2枚目に切替）"></textarea>
     </div>
 
-    <!-- 本番（プロンプター）モード -->
     <div id="prompter">
       <div id="scroll">
         <div id="scriptText"></div>
@@ -257,7 +226,6 @@
       <div id="mirrorBadge">↔ ミラーモード中</div>
     </div>
 
-    <!-- 設定パネル -->
     <div id="settings">
       <h3>⚙ 表示・動作設定</h3>
 
@@ -269,7 +237,7 @@
         <div class="toggleRow"><span>左右マージン</span><span class="val" id="mgVal">8%</span></div>
         <input type="range" id="mgRange" min="0" max="35" value="8">
         <div class="toggleRow"><span>ガイド位置（上から）</span><span class="val" id="guideVal">45%</span></div>
-        <input type="range" id="guideRange" min="20" max="70" value="45">
+        <input type="range" id="guideRange" min="5" max="70" value="45">
       </div>
 
       <div class="grp">
@@ -293,8 +261,11 @@
           <input type="checkbox" id="voiceChk" checked></div>
         <div class="toggleRow"><span>速度フォールバック（自動巻取り）</span>
           <input type="checkbox" id="fallbackChk"></div>
-        <div class="toggleRow"><span>フォールバック速度</span><span class="val" id="spdVal">40</span></div>
-        <input type="range" id="spdRange" min="5" max="200" value="40">
+        <div class="toggleRow">
+          <span>フォールバック速度</span>
+          <input type="number" id="spdInput" min="1" max="1000" value="40" style="width:64px; text-align:right; font-variant-numeric:tabular-nums; color:var(--accent); font-weight:bold;">
+        </div>
+        <input type="range" id="spdRange" min="1" max="500" value="40">
         <div class="hint">音声が拾えない・沈黙が続くと、設定速度で自動スクロールします。音声追従と併用時は、追従が数秒外れた間だけ作動します。</div>
         <div class="toggleRow"><span>一致しきい値</span><span class="val" id="thVal">0.60</span></div>
         <input type="range" id="thRange" min="30" max="90" value="60">
@@ -322,7 +293,17 @@
 
   </div>
 
-  <!-- ============ ステータスバー ============ -->
+  <div id="scriptModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📂 保存済み台本</h3>
+        <button id="closeModalBtn" style="padding:4px 8px;">✕ 閉じる</button>
+      </div>
+      <div class="modal-body" id="savedItems">
+        </div>
+    </div>
+  </div>
+
   <div id="statusbar">
     <span id="micState"><span class="dot" id="micDot"></span><span id="micLabel">マイク停止中</span></span>
     <span class="sep"></span>
@@ -334,20 +315,45 @@
     <span id="debugBox" class="hidden">認識：</span>
   </div>
 
+  <div id="editToolbar" class="toolbar">
+    <button id="modeBtn_edit" class="primary">▶ 本番モードへ</button>
+    <span class="sep"></span>
+    <button id="openScriptsBtn">📂 台本を開く</button>
+    <input type="text" id="scriptName" placeholder="台本名を入力" style="min-width:140px;">
+    <button id="saveBtn">💾 保存</button>
+    <button id="newBtn">＋ 新規</button>
+    <span class="sep"></span>
+    <input type="file" id="slideInput" accept="image/*" multiple style="display:none;">
+    <button id="pickSlidesBtn">🖼 スライド選択</button>
+    <button id="openSlideWinBtn">🪟 スライド窓</button>
+    <button id="testNextBtn" title="動作確認用：手動で次のスライドへ">▶ 次へ(テスト)</button>
+    <span class="hint" id="slideInfo">画像未選択</span>
+    
+    <span class="spacer"></span>
+    <span class="hint" style="margin-right:8px;">台本に <kbd>S01</kbd> と書いた位置で1枚目に切替</span>
+    <button id="settingsBtn_edit">⚙ 設定</button>
+  </div>
+
+  <div id="promptToolbar" class="toolbar hidden">
+    <button id="modeBtn_prompt" class="primary">✎ 編集モードへ</button>
+    <span class="sep"></span>
+    <button id="startBtn" disabled>開始 (Space)</button>
+    <button id="pauseBtn" disabled>一時停止</button>
+    <button id="resetBtn" disabled>リセット</button>
+    <span class="sep"></span>
+    <button id="slidePrevBtn" title="スライドを手動で1つ戻す（[ キー）" disabled>◀ スライド</button>
+    <button id="slideNextBtn" title="スライドを手動で1つ進める（] キー）" disabled>スライド ▶</button>
+    <span class="sep"></span>
+    <button id="mirrorBtn" title="物理プロンプター用に左右反転">↔ ミラーモード</button>
+    <button id="fsBtn">⛶ 全画面</button>
+    <span class="spacer"></span>
+    <button id="settingsBtn_prompt">⚙ 設定</button>
+  </div>
+
 </div>
 
 <script>
 "use strict";
-/* ============================================================================
- *  音声追従型テレプロンプター
- *  - 単一HTML / Vanilla JS
- *  - 構成:
- *      [A] 正規化・照合ロジック（追従の心臓部）
- *      [B] 音声認識制御（webkitSpeechRecognition + 自動再起動）
- *      [C] スクロール / ハイライト / フォールバック（UI追従）
- *      [D] ストレージ（IndexedDB）
- *      [E] UI制御（モード・設定・ショートカット・全画面）
- * ========================================================================== */
 
 /* ---- ブラウザ対応チェック ---- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -364,37 +370,27 @@ const scriptTextEl= $('scriptText');
 const editArea    = $('editArea');
 const guideline   = $('guideline');
 
+const editToolbar   = $('editToolbar');
+const promptToolbar = $('promptToolbar');
+const scriptModal   = $('scriptModal');
+
 /* ============================================================================
  * [A] 正規化・照合ロジック
  * ========================================================================== */
-
-// 認識・台本の双方から除去するフィラー（言い淀み）。長いものから先に並べる。
 const FILLERS = ['えーっと','えーと','ええっと','ええと','えっと','あのー','あのう','その','えー','ええ','あの','まあ','うーん','んー','なんか','こう','そのー'];
 
-// 除去対象の記号・空白・句読点（コードポイント単位でざっくり判定）
 function isRemovableChar(ch){
-  // 空白・改行・タブ
   if (/\s/.test(ch)) return true;
-  // 日本語/英数の句読点・記号類
-  if (/[、。，．,.!！?？・…‥「」『』（）()【】［］\[\]｛｝{}〈〉《》〜~ー\-—–:：;；'"’”“'＂＇\/／|｜＿_＊*＃#＆&＠@\^＾%％　]/.test(ch)) return true;
+  if (/[、。，．,.!！?？・…‥「」『』（）()【】［］\[\]｛｝{}〈〉《》〜~ー\-—–:：;；'"’”“'＂＇\/／|｜＿_＊*＃#＆&＠@\^＾%％ ]/.test(ch)) return true;
   return false;
 }
 
-/**
- * テキストを「比較用文字列」に正規化する。
- * @param {string} text
- * @param {boolean} withMap  true の場合、各正規化文字が元テキストの何文字目かを示す map を返す
- * @returns {{chars:string, map:number[]}}
- *   chars: 正規化後の文字列（フィラー・記号・空白を除去、カタカナ→ひらがな化）
- *   map:   chars[i] が元テキストの何文字目かを示す配列（withMap時のみ意味を持つ）
- */
 function normalize(text, withMap){
   let out = [];
   let map = [];
   let i = 0;
   const n = text.length;
   while (i < n){
-    // フィラー一致を優先的にスキップ
     let skipped = false;
     for (const f of FILLERS){
       if (text.startsWith(f, i)){
@@ -405,14 +401,12 @@ function normalize(text, withMap){
     }
     if (skipped) continue;
 
-    // スライド送りマーカー Snn（S01, s2 等）は照合対象から除去
     const mk = /^S\d{1,3}/i.exec(text.slice(i, i + 4));
     if (mk){ i += mk[0].length; continue; }
 
     const ch = text[i];
     if (isRemovableChar(ch)){ i++; continue; }
 
-    // カタカナ→ひらがな化（認識ゆれ吸収）。長音符は除去済み。
     let c = ch;
     const code = c.charCodeAt(0);
     if (code >= 0x30A1 && code <= 0x30F6){
@@ -425,15 +419,9 @@ function normalize(text, withMap){
   return { chars: out.join(''), map };
 }
 
-/**
- * 2つの文字列の類似度（0〜1）。最長共通部分列(LCS)ベース。
- * a を台本側セグメント、b を認識テール（同程度の長さ）とする想定。
- * 共通部分列長 / b.length で「認識テールがどれだけ台本に含まれるか」を測る。
- */
 function similarity(a, b){
   const la = a.length, lb = b.length;
   if (la === 0 || lb === 0) return 0;
-  // LCS（1次元DP）
   let prev = new Uint16Array(lb + 1);
   let cur  = new Uint16Array(lb + 1);
   for (let i = 1; i <= la; i++){
@@ -445,48 +433,36 @@ function similarity(a, b){
     cur.fill(0);
   }
   const lcs = prev[lb];
-  return lcs / lb; // 認識テール基準
+  return lcs / lb;
 }
 
-/* ---- 照合のパラメータ ---- */
-const TAIL_LEN     = 18;   // 認識テキスト末尾の比較文字数
-const WIN_BACK     = 5;    // 窓：現在地より前方向（戻り）の許容
-const WIN_FWD_BASE = 60;   // 窓：現在地より後方向（進み）の基本幅
-const WIN_FWD_WIDE = 260;  // リカバリ時に広げる後方幅
+const TAIL_LEN     = 18;
+const WIN_BACK     = 5;
+const WIN_FWD_BASE = 60;
+const WIN_FWD_WIDE = 260;
 
 /* ============================================================================
  * [C] 追従の状態と、台本のレンダリング / スクロール / ハイライト
  * ========================================================================== */
+let normData = { chars:'', map:[] };
+let spans = [];
+let currentNorm = 0;
+let currentOrig = 0;
+let highlightedTo = -1;
 
-// 台本データ
-let normData = { chars:'', map:[] };  // 正規化台本＋元indexマップ
-let spans = [];                        // 元テキスト各文字に対応する<span>
-let currentNorm = 0;                   // 現在地（正規化文字インデックス）
-let currentOrig = 0;                   // 現在地（元テキスト文字インデックス）
-let highlightedTo = -1;                // どこまで read 着色したか（元index）
-
-/* ---- スライド送りの状態 ---- */
-// markers: 台本中の Snn マーカーを { pos:元index, num:番号(1始まり) } で昇順保持
 let markers = [];
-let nextMarkerIdx = 0;         // 次に通過待ちのマーカー（markers の添字）
-let slideIndex = -1;           // 現在表示中のスライド（0始まり / -1=未表示）
+let nextMarkerIdx = 0;
+let slideIndex = -1;
 
-// 追従の稼働状態
-let following = false;                 // 開始中か
-let lastAdvanceTime = 0;               // 最後に前進した時刻
-let threshold = 0.60;                  // 一致しきい値
+let following = false;
+let lastAdvanceTime = 0;
+let threshold = 0.60;
 
-/**
- * 台本テキストをプロンプターへ展開する。
- * 元テキストの全文字を <span> 化（改行も span に入れ pre-wrap で表示）。
- */
 function renderScript(text){
   scriptTextEl.textContent = '';
   spans = [];
-  // Snn マーカー（S01, S2, s10 等）を検出。大文字小文字どちらでも可、桁数自由。
-  // マーカー番号 num は 1始まり。表示する画像は slideFiles[num-1]（S01→1枚目）。
   markers = [];
-  const markerCharSet = new Set(); // marker クラスを付ける元index
+  const markerCharSet = new Set();
   {
     const re = /S(\d{1,3})/gi;
     let m;
@@ -494,7 +470,6 @@ function renderScript(text){
       const num = parseInt(m[1], 10);
       if (num < 1) continue;
       markers.push({ pos: m.index, num });
-      // S + 数字部分すべてに着色クラスを付ける
       for (let k = 0; k < m[0].length; k++){ markerCharSet.add(m.index + k); }
     }
   }
@@ -511,42 +486,30 @@ function renderScript(text){
   scriptTextEl.appendChild(frag);
   normData = normalize(text, true);
   resetPosition();
-  // スライド送り状態をリセット
   nextMarkerIdx = 0;
   slideIndex = -1;
   updateSlideState();
 }
 
-/** 現在地を先頭に戻す */
 function resetPosition(){
   currentNorm = 0;
   currentOrig = 0;
-  // ハイライト全消去
   for (const s of spans){ s.className = ''; }
-  // 先頭以降を ahead（明るく）に
   applyAheadFrom(0);
   highlightedTo = -1;
   if (scrollBox) scrollBox.scrollTop = 0;
 }
 
-/** origIndex 以降を「これから読む（明るい）」に、未満を read（暗い）に */
 function applyAheadFrom(origIdx){
-  // 重い全走査を避けるため、状態遷移は updateHighlight 側で差分更新する。
-  // ここは reset 直後のみ呼ぶ簡易版。
   for (let i = 0; i < spans.length; i++){
     spans[i].className = (i >= origIdx) ? 'ahead' : 'read';
   }
 }
 
-/**
- * ハイライトを現在地 origIdx に更新（差分更新で軽量化）。
- */
 function updateHighlight(origIdx){
-  // 前回の current を解除
   if (currentOrig >= 0 && spans[currentOrig]){
     spans[currentOrig].classList.remove('current');
   }
-  // highlightedTo+1 .. origIdx を read に（前進分だけ）
   if (origIdx > highlightedTo){
     for (let i = highlightedTo + 1; i <= origIdx && i < spans.length; i++){
       spans[i].classList.remove('ahead');
@@ -554,27 +517,19 @@ function updateHighlight(origIdx){
     }
     highlightedTo = origIdx;
   }
-  // 現在地に current
   if (spans[origIdx]){
     spans[origIdx].classList.add('current');
   }
   currentOrig = origIdx;
-  // スライド送りマーカーを通過していないかチェック
   checkMarkerPass(origIdx);
 }
 
-/**
- * 現在地 origIdx が、次の通過待ちマーカー位置に到達/通過したらそのマーカーの
- * 番号に対応する画像を表示する。S01 通過 → 1枚目(slideFiles[0])。
- * 一度の前進で複数マーカーをまたいだ場合は、最後にまたいだマーカーの画像にする。
- */
 function checkMarkerPass(origIdx){
   let fired = false;
   let targetNum = -1;
   while (nextMarkerIdx < markers.length &&
          origIdx >= markers[nextMarkerIdx].pos){
     const mk = markers[nextMarkerIdx];
-    // このマーカーを「発火済み」に着色
     markPassedColor(mk.pos, true);
     targetNum = mk.num;
     nextMarkerIdx++;
@@ -585,7 +540,6 @@ function checkMarkerPass(origIdx){
   }
 }
 
-/** マーカー位置 pos から始まる Snn 文字列の着色を fired にする/戻す */
 function markPassedColor(pos, on){
   for (let k = pos; k < spans.length; k++){
     const sp = spans[k];
@@ -594,31 +548,24 @@ function markPassedColor(pos, on){
   }
 }
 
-/** 元index位置がガイドラインに来るようスムーズスクロール */
 let lastScrollTarget = -1;
 function scrollToOrig(origIdx){
   const span = spans[origIdx];
   if (!span) return;
-  const guideRatio = guidePos;            // 0〜1
+  const guideRatio = guidePos;
   const target = span.offsetTop - scrollBox.clientHeight * guideRatio
                  + span.offsetHeight / 2;
-  // 過剰なスクロール命令を抑制
   if (Math.abs(target - lastScrollTarget) < 4) return;
   lastScrollTarget = target;
   scrollBox.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
 }
 
-/**
- * 認識テールを使って現在地を前進させる（追従の中核）。
- * @param {string} recogNorm  正規化済みの認識テキスト（末尾側が新しい）
- */
 function advanceBySpeech(recogNorm){
   if (!recogNorm) return;
   const tail = recogNorm.slice(-TAIL_LEN);
   const chars = normData.chars;
   if (!chars) return;
 
-  // リカバリ：一定時間前進していなければ窓を広げて再探索
   const sinceAdvance = performance.now() - lastAdvanceTime;
   const winFwd = (sinceAdvance > 3000) ? WIN_FWD_WIDE : WIN_FWD_BASE;
 
@@ -626,27 +573,28 @@ function advanceBySpeech(recogNorm){
   const hi = Math.min(chars.length, currentNorm + winFwd);
 
   let best = { score: 0, pos: -1 };
-  // 窓内で「セグメント末尾位置 p」を1文字ずつスライドして照合
   for (let p = lo + 1; p <= hi; p++){
     const segStart = Math.max(lo, p - tail.length);
     const seg = chars.slice(segStart, p);
-    const sc = similarity(seg, tail);
+    let sc = similarity(seg, tail);
+
+    if (p > currentNorm) {
+      const distance = p - currentNorm;
+      sc -= distance * 0.0015;
+    }
+
     if (sc > best.score){
       best = { score: sc, pos: p };
     }
   }
 
-  // 信頼度メーター更新
   setConfidence(best.score);
 
-  // しきい値未満 → 更新しない（誤爆防止）
   if (best.score < threshold || best.pos < 0) return;
 
-  // 現在地より後ろのときだけ前進（逆戻り防止）
   if (best.pos > currentNorm){
     currentNorm = best.pos;
     lastAdvanceTime = performance.now();
-    // 正規化index → 元index（直近の有効文字へ）
     const mapIdx = Math.min(currentNorm, normData.map.length - 1);
     const origIdx = normData.map[mapIdx] ?? (spans.length - 1);
     updateHighlight(origIdx);
@@ -654,21 +602,18 @@ function advanceBySpeech(recogNorm){
   }
 }
 
-/* ---- 信頼度インジケーター ---- */
 function setConfidence(score){
   const pct = Math.round(score * 100);
   const fill = $('confFill');
   fill.style.width = pct + '%';
   $('confPct').textContent = pct + '%';
-  // 色: 低=赤 中=橙 高=緑
   if (score >= threshold) fill.style.background = 'var(--ok)';
   else if (score >= threshold * 0.6) fill.style.background = 'var(--warn)';
   else fill.style.background = 'var(--bad)';
 }
 
-/* ---- 速度フォールバック（自動巻取りスクロール） ---- */
 let fallbackEnabled = false;
-let fallbackSpeed = 40;     // px/sec
+let fallbackSpeed = 40;
 let voiceEnabled = true;
 let fbLastTs = 0;
 function fallbackTick(ts){
@@ -676,7 +621,6 @@ function fallbackTick(ts){
     if (!fbLastTs) fbLastTs = ts;
     const dt = (ts - fbLastTs) / 1000;
     fbLastTs = ts;
-    // 音声追従ONのときは「追従が2.5秒以上外れている間」だけ作動
     const idle = performance.now() - lastAdvanceTime;
     const active = !voiceEnabled || idle > 2500;
     if (active){
@@ -690,27 +634,18 @@ function fallbackTick(ts){
 requestAnimationFrame(fallbackTick);
 
 /* ============================================================================
- * [B] 音声認識制御（webkitSpeechRecognition + 自動再起動）
+ * [B] 音声認識制御
  * ========================================================================== */
 let recognition = null;
-let recogStopFlag = true;        // true の間は再起動しない（明示停止）
-let finalBuffer = '';            // 確定テキストの正規化バッファ（末尾だけ保持）
-let micStream = null;            // getUserMedia で確保した永続マイクストリーム
-let recognizing = false;         // recognition が起動中か（二重 start 防止）
-let restartTimer = null;         // onend からの自動再起動タイマー
+let recogStopFlag = true;
+let finalBuffer = '';
+let micStream = null;
+let recognizing = false;
+let restartTimer = null;
 
-/* ---- マイク権限の永続確保（再プロンプト防止の肝） ----
- * SpeechRecognition は数十秒〜数分ごとに自動で onend → start() を繰り返す。
- * 何もしないと再起動のたびに Chrome がマイク権限を再確認し、ダイアログが
- * 再表示されて接続が止まることがある（特に file:// で顕著）。
- * そこで getUserMedia でマイクストリームを取得し、追従中は掴みっぱなしにする。
- * 権限状態が「許可済み（使用中）」で維持されるため、認識が裏で何度
- * 再起動してもダイアログは再表示されない。 */
 async function ensureMicStream(){
-  if (micStream && micStream.active) return true;          // 既に確保済み
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    return true;  // getUserMedia 非対応環境でも認識自体は試す
-  }
+  if (micStream && micStream.active) return true;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return true;
   try {
     micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     return true;
@@ -719,10 +654,9 @@ async function ensureMicStream(){
     if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')){
       recogStopFlag = true;
       setMic('err', 'マイク権限が拒否されました');
-      alert('マイクの使用が許可されませんでした。\nアドレスバーのマイクアイコンから「常に許可」を選ぶか、\nhttps:// または localhost で開いているか確認してください。');
+      alert('マイクの使用が許可されませんでした。');
       return false;
     }
-    // それ以外（デバイス無し等）は認識側のフォールバックに任せる
     return true;
   }
 }
@@ -752,15 +686,12 @@ function buildRecognition(){
       if (res.isFinal) finals += txt;
       else interim += txt;
     }
-    // 確定分はバッファに追加（末尾100文字相当だけ保持）
     if (finals){
       finalBuffer = (finalBuffer + normalize(finals, false).chars).slice(-120);
     }
-    // interim で速報追従、final 込みで補正
     const interimNorm = normalize(interim, false).chars;
     const combined = (finalBuffer + interimNorm).slice(-60);
 
-    // デバッグ表示
     if (debugVisible){
       $('debugBox').textContent = '認識：' + (finals ? '【'+finals+'】' : '') + interim;
     }
@@ -770,33 +701,27 @@ function buildRecognition(){
     }
   };
 
-  // 数十秒/無音で停止する → 停止フラグが無ければ必ず再起動（長台本対策の肝）
-  // マイクストリームは掴んだままなので、ここでの再起動では権限は再確認されない。
   r.onend = () => {
     recognizing = false;
     if (recogStopFlag){
       setMic('off', 'マイク停止中');
       return;
     }
-    // 短い遅延を挟んでタイトループ（連続 start による例外）を防ぐ
     clearTimeout(restartTimer);
     restartTimer = setTimeout(() => {
       if (recogStopFlag || recognizing) return;
-      try { r.start(); } catch(_){ /* InvalidState 等。次の onend で再試行 */ }
+      try { r.start(); } catch(_){}
     }, 250);
   };
 
-  // エラーも握りつぶして継続（no-speech, network 等で止めない）
   r.onerror = (ev) => {
     if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed'){
       recogStopFlag = true;
       recognizing = false;
       releaseMicStream();
       setMic('err', 'マイク権限が拒否されました');
-      alert('マイクの使用が許可されませんでした。\nアドレスバーのマイクアイコンから「常に許可」を選ぶか、\nhttps:// または localhost で開いているか確認してください。');
       return;
     }
-    // それ以外（no-speech, aborted, network）は onend の自動再起動に任せる
     setMic('warn', '再接続中…(' + ev.error + ')');
   };
 
@@ -807,14 +732,13 @@ async function startRecognition(){
   if (!SR) return;
   recogStopFlag = false;
   clearTimeout(restartTimer);
-  // 先に永続的なマイク権限を確保しておく（以降の自動再起動で再プロンプトさせない）
   const ok = await ensureMicStream();
-  if (!ok) return;                    // 明示拒否なら中断
-  if (recogStopFlag) return;          // 取得待ちの間に停止された場合
+  if (!ok) return;
+  if (recogStopFlag) return;
   if (!recognition) recognition = buildRecognition();
-  if (recognizing) return;            // 二重 start 防止
+  if (recognizing) return;
   try { recognition.start(); }
-  catch(_){ /* すでに開始済みなら無視 */ }
+  catch(_){}
 }
 
 function stopRecognition(){
@@ -835,21 +759,15 @@ function setMic(state, label){
 }
 
 /* ============================================================================
- * [S] スライド送り（別ウィンドウ + 音声追従連動）
- *  - 編集モードで画像を複数選択 → ファイル名で自然順ソートして保持
- *  - 「スライド窓」を window.open で開き、画像1枚を黒背景全画面表示
- *  - 親→子は postMessage で「N枚目を表示」を通知（Blob URL を渡す）
- *  - OBS 側はこの子ウィンドウを「ウィンドウキャプチャ」で取り込む
+ * [S] スライド送り
  * ========================================================================== */
-let slideFiles = [];        // { name, dataUrl } の配列（表示順）
-let slideWin = null;        // 子ウィンドウ参照
+let slideFiles = [];
+let slideWin = null;
 
-/** ファイル名の自然順ソート（slide_2 < slide_10 となるように） */
 function naturalCompare(a, b){
   return a.localeCompare(b, undefined, { numeric:true, sensitivity:'base' });
 }
 
-/** File を Data URL(base64) に変換 */
 function fileToDataURL(file){
   return new Promise((resolve, reject) => {
     const fr = new FileReader();
@@ -859,7 +777,6 @@ function fileToDataURL(file){
   });
 }
 
-/** input[type=file] で選ばれた画像を取り込む（Data URL化して保持） */
 async function loadSlideFiles(fileList){
   const imgs = Array.from(fileList)
     .filter(f => f.type.startsWith('image/'))
@@ -871,37 +788,26 @@ async function loadSlideFiles(fileList){
       const dataUrl = await fileToDataURL(imgs[k]);
       loaded.push({ name: imgs[k].name, dataUrl });
       $('slideInfo').textContent = '読み込み中… (' + (k+1) + '/' + imgs.length + ')';
-    } catch(err){
-      console.error('画像読み込み失敗:', imgs[k].name, err);
-    }
+    } catch(err){}
   }
   slideFiles = loaded;
   $('slideInfo').textContent = slideFiles.length
     ? slideFiles.length + ' 枚（' + slideFiles[0].name + ' … ' + slideFiles[slideFiles.length-1].name + '）'
     : '画像の読み込みに失敗しました';
-  // 取り込み直後は表示しない（S01 通過まで待機）。窓があればプレースホルダのまま。
   slideIndex = -1;
   applySlideToWindow();
   updateSlideState();
 }
 
-/** スライド表示ウィンドウを開く（OBS のウィンドウキャプチャ対象）
- *  postMessage に依存せず、親から子の DOM を直接構築・操作する確実方式。 */
 function openSlideWindow(){
-  // 既に開いていれば前面化
   if (slideWin && !slideWin.closed){ slideWin.focus(); applySlideToWindow(); return; }
   const w = window.open('', 'TP_SLIDES', 'width=1280,height=720');
-  if (!w){
-    alert('ポップアップがブロックされました。\nこのサイトのポップアップを許可してから、もう一度「スライド窓を開く」を押してください。');
-    return;
-  }
+  if (!w){ alert('ポップアップがブロックされました。'); return; }
   slideWin = w;
   buildSlideWindowDOM(w);
   applySlideToWindow();
-  $('hintBar').textContent = 'スライド窓を開きました。OBS の「ウィンドウキャプチャ」でこの窓を選択してください。';
 }
 
-/** 子ウィンドウの中身（黒背景・中央寄せ・img と placeholder）を親から組み立てる */
 function buildSlideWindowDOM(w){
   const doc = w.document;
   doc.open();
@@ -916,14 +822,12 @@ function buildSlideWindowDOM(w){
   body.style.display = 'flex';
   body.style.alignItems = 'center';
   body.style.justifyContent = 'center';
-  // プレースホルダ
   const ph = doc.createElement('div');
   ph.id = 'ph';
   ph.textContent = '（スライド待機中）';
   ph.style.color = '#444';
   ph.style.fontFamily = 'sans-serif';
   ph.style.fontSize = '24px';
-  // 画像
   const img = doc.createElement('img');
   img.id = 'pic';
   img.style.maxWidth = '100%';
@@ -934,13 +838,11 @@ function buildSlideWindowDOM(w){
   body.appendChild(img);
 }
 
-/** 現在の slideIndex を子ウィンドウの DOM に反映（親から直接操作） */
 function applySlideToWindow(){
   if (!slideWin || slideWin.closed) return;
   const doc = slideWin.document;
   let img = doc.getElementById('pic');
   let ph = doc.getElementById('ph');
-  // 何らかの理由で DOM が消えていたら作り直す
   if (!img || !ph){ buildSlideWindowDOM(slideWin); img = doc.getElementById('pic'); ph = doc.getElementById('ph'); }
   const s = (slideIndex >= 0) ? slideFiles[slideIndex] : null;
   if (s){
@@ -955,7 +857,6 @@ function applySlideToWindow(){
   }
 }
 
-/** 指定インデックスのスライドへ移動（-1=非表示、0..n-1=画像） */
 function gotoSlide(idx){
   if (!slideFiles.length){ slideIndex = -1; applySlideToWindow(); updateSlideState(); return; }
   if (idx < 0){ slideIndex = -1; applySlideToWindow(); updateSlideState(); return; }
@@ -965,28 +866,20 @@ function gotoSlide(idx){
   updateSlideState();
 }
 
-/** マーカー番号（1始まり）に対応する画像を表示。S01→slideFiles[0]。 */
-function gotoSlideByNumber(num){
-  gotoSlide(num - 1);
-}
+function gotoSlideByNumber(num){ gotoSlide(num - 1); }
 
-/** 手動：次のスライドへ（リスクヘッジ） */
 function manualNextSlide(){
   if (!slideFiles.length) return;
   const next = (slideIndex < 0) ? 0 : Math.min(slideIndex + 1, slideFiles.length - 1);
   gotoSlide(next);
-  $('hintBar').textContent = '手動でスライドを進めました（' + (slideIndex+1) + '/' + slideFiles.length + '）';
 }
 
-/** 手動：前のスライドへ（リスクヘッジ） */
 function manualPrevSlide(){
   if (!slideFiles.length) return;
   const prev = (slideIndex <= 0) ? 0 : slideIndex - 1;
   gotoSlide(prev);
-  $('hintBar').textContent = '手動でスライドを戻しました（' + (slideIndex+1) + '/' + slideFiles.length + '）';
 }
 
-/** ステータスバーの枚数表示を更新 */
 function updateSlideState(){
   const total = slideFiles.length;
   const cur = slideIndex >= 0 ? (slideIndex + 1) : '–';
@@ -997,7 +890,7 @@ function updateSlideState(){
 }
 
 /* ============================================================================
- * [D] ストレージ（IndexedDB）
+ * [D] ストレージ（IndexedDB） & モーダル制御
  * ========================================================================== */
 const DB_NAME = 'teleprompterDB';
 const STORE = 'scripts';
@@ -1045,7 +938,7 @@ function dbDelete(id){
   });
 }
 
-let currentScriptId = null;  // 編集中の保存ID
+let currentScriptId = null;
 
 async function refreshList(){
   const items = await dbAll();
@@ -1055,6 +948,8 @@ async function refreshList(){
     const p = document.createElement('div');
     p.className = 'hint';
     p.textContent = '保存された台本はまだありません。';
+    p.style.textAlign = 'center';
+    p.style.padding = '20px';
     box.appendChild(p);
     return;
   }
@@ -1064,12 +959,11 @@ async function refreshList(){
     const nm = document.createElement('span');
     nm.className = 'nm';
     nm.textContent = it.name || '(無題)';
-    nm.title = '読み込む';
+    nm.title = 'クリックして読み込む';
     nm.onclick = () => loadScript(it);
     const del = document.createElement('button');
     del.className = 'danger';
-    del.textContent = '✕';
-    del.title = '削除';
+    del.textContent = '✕ 削除';
     del.onclick = async (e) => {
       e.stopPropagation();
       if (confirm('「'+(it.name||'(無題)')+'」を削除しますか？')){
@@ -1088,37 +982,48 @@ function loadScript(it){
   editArea.value = it.text;
   $('scriptName').value = it.name || '';
   currentScriptId = it.id;
+  scriptModal.classList.remove('show');
 }
+
+/* ---- モーダルの開閉 ---- */
+$('openScriptsBtn').onclick = () => {
+  refreshList();
+  scriptModal.classList.add('show');
+};
+$('closeModalBtn').onclick = () => scriptModal.classList.remove('show');
+scriptModal.addEventListener('click', (e) => {
+  if (e.target === scriptModal) scriptModal.classList.remove('show'); // 背景クリックで閉じる
+});
 
 /* ============================================================================
  * [E] UI制御（モード切替・設定・ショートカット・全画面）
  * ========================================================================== */
 let promptMode = false;
 let debugVisible = false;
-let guidePos = 0.45;   // ガイド位置（0〜1）
+let guidePos = 0.45;
 
-/* ---- モード切替 ---- */
 function setMode(toPrompter){
   promptMode = toPrompter;
   if (toPrompter){
     renderScript(editArea.value);
     editor.classList.add('hidden');
     prompter.classList.add('active');
-    $('modeBtn').textContent = '✎ 編集モードへ';
-    $('hintBar').textContent = '本番モード：開始ボタンか Space で追従スタート';
+    editToolbar.classList.add('hidden');
+    promptToolbar.classList.remove('hidden');
+    
     $('startBtn').disabled = false;
     $('pauseBtn').disabled = false;
     $('resetBtn').disabled = false;
     $('slidePrevBtn').disabled = false;
     $('slideNextBtn').disabled = false;
-    // 開始時はまだ何も表示しない（S01 通過まで待機）
     gotoSlide(-1);
   } else {
     stopFollow();
     editor.classList.remove('hidden');
     prompter.classList.remove('active');
-    $('modeBtn').textContent = '▶ 本番モードへ';
-    $('hintBar').textContent = '編集モード：台本を入力して「本番モードへ」';
+    editToolbar.classList.remove('hidden');
+    promptToolbar.classList.add('hidden');
+    
     $('startBtn').disabled = true;
     $('pauseBtn').disabled = true;
     $('resetBtn').disabled = true;
@@ -1127,20 +1032,17 @@ function setMode(toPrompter){
   }
 }
 
-/* ---- 開始 / 一時停止 / リセット ---- */
 function startFollow(){
   if (!promptMode) return;
   following = true;
   lastAdvanceTime = performance.now();
   if (voiceEnabled) startRecognition();
   $('startBtn').textContent = '追従中…';
-  $('hintBar').textContent = '追従中：外れたら本文クリックで再同期できます';
 }
 function pauseFollow(){
   following = false;
   stopRecognition();
   $('startBtn').textContent = '開始 (Space)';
-  $('hintBar').textContent = '一時停止中';
 }
 function stopFollow(){
   following = false;
@@ -1156,42 +1058,30 @@ function resetFollow(){
   lastScrollTarget = -1;
   lastAdvanceTime = performance.now();
   finalBuffer = '';
-  // スライド送りも先頭へ（まだ何も通過していない＝非表示）
   nextMarkerIdx = 0;
   for (let i = 0; i < markers.length; i++){
     markPassedColor(markers[i].pos, false);
   }
   gotoSlide(-1);
-  $('hintBar').textContent = '先頭に戻りました';
 }
 
-/* ---- 本文クリックで手動同期 ---- */
 scriptTextEl.addEventListener('click', (e) => {
   const t = e.target;
   if (t.tagName !== 'SPAN') return;
   const origIdx = parseInt(t.dataset.i, 10);
-  // 元index → 直近の正規化index を逆引き（map から二分探索的に）
   let ni = 0;
   for (let k = 0; k < normData.map.length; k++){
     if (normData.map[k] >= origIdx){ ni = k; break; }
     ni = k;
   }
-  // 後退も許可（手動なので逆戻りOK）
   currentNorm = ni;
   lastAdvanceTime = performance.now();
-  // ハイライトをこの位置に作り直す（後退時は read を巻き戻す）
+  finalBuffer = ''; 
   rebuildHighlight(origIdx);
   scrollToOrig(origIdx);
-  // クリック位置に応じてマーカー通過数とスライドを再計算
   resyncSlideToPosition(origIdx);
 });
 
-/**
- * 手動同期（クリックで前後に飛んだ）後、その位置に整合するように
- * 通過済みマーカーとスライド番号を作り直す。
- * 通過済みのうち最後のマーカー番号 = 表示すべき画像番号。
- * まだ1つも通過していなければ非表示（-1）に戻す。
- */
 function resyncSlideToPosition(origIdx){
   let passed = 0;
   let lastNum = -1;
@@ -1200,7 +1090,6 @@ function resyncSlideToPosition(origIdx){
     else break;
   }
   nextMarkerIdx = passed;
-  // マーカーの発火着色を作り直す
   for (let i = 0; i < markers.length; i++){
     markPassedColor(markers[i].pos, i < passed);
   }
@@ -1211,7 +1100,6 @@ function resyncSlideToPosition(origIdx){
   }
 }
 
-/** 任意位置にハイライトを作り直す（手動同期・後退対応） */
 function rebuildHighlight(origIdx){
   for (let i = 0; i < spans.length; i++){
     const isMarker = spans[i].dataset.marker === '1' || spans[i].classList.contains('marker');
@@ -1223,7 +1111,6 @@ function rebuildHighlight(origIdx){
   currentOrig = origIdx;
 }
 
-/* ---- 全画面 ---- */
 function toggleFullscreen(){
   if (!document.fullscreenElement){
     (prompter.requestFullscreen ? prompter : document.documentElement)
@@ -1233,7 +1120,6 @@ function toggleFullscreen(){
   }
 }
 
-/* ---- 設定パネル：各種反映 ---- */
 function applySettings(){
   document.documentElement.style.setProperty('--fs', $('fsRange').value + 'px');
   document.documentElement.style.setProperty('--lh', ($('lhRange').value/10).toFixed(1));
@@ -1246,8 +1132,10 @@ function applySettings(){
   guideline.style.top = (guidePos*100) + 'vh';
   $('guideVal').textContent = $('guideRange').value + '%';
 
-  fallbackSpeed = parseInt($('spdRange').value, 10);
-  $('spdVal').textContent = fallbackSpeed;
+  let spd = parseInt($('spdInput').value, 10);
+  if (isNaN(spd) || spd < 1) spd = 40;
+  fallbackSpeed = spd;
+
   fallbackEnabled = $('fallbackChk').checked;
   voiceEnabled = $('voiceChk').checked;
 
@@ -1259,14 +1147,12 @@ function applySettings(){
      : voiceEnabled ? '音声追従'
      : fallbackEnabled ? '速度フォールバック' : '手動');
 
-  // 音声追従中に voice を切ったら認識停止
   if (following){
     if (voiceEnabled) startRecognition();
     else stopRecognition();
   }
 }
 
-/* ---- テーマ ---- */
 function applyTheme(name){
   const root = document.documentElement.style;
   const themes = {
@@ -1281,31 +1167,21 @@ function applyTheme(name){
   root.setProperty('--dim', t.dim);
 }
 
-/* ---- ガイドライン表示切替 ---- */
 function applyGuideVisible(){
   guideline.classList.toggle('hidden', !$('guideChk').checked);
 }
 
-/* ---- デバッグ表示切替 ---- */
 function applyDebug(){
   debugVisible = $('debugChk').checked;
   $('debugBox').classList.toggle('hidden', !debugVisible);
 }
 
-/* ---- 水平ミラーモード ----
- * 物理テレプロンプター（ハーフミラー）でiPad等を反射させる際、
- * テキストが鏡写しにならないよう、台本表示コンテナのみ左右反転する。
- * UIボタン・信頼度メーター等には反転を適用しない。
- * 状態は localStorage に保存し次回起動時に復元する（boolフラグのみ）。 */
 const MIRROR_KEY = 'tp_mirror_mode';
 let mirrorOn = false;
 
 function applyMirror(){
-  // 反転は #scriptText（台本テキストコンテナ）にだけ付与
   scriptTextEl.classList.toggle('mirror-mode', mirrorOn);
-  // ボタンのアクティブ表示
   $('mirrorBtn').classList.toggle('active', mirrorOn);
-  // ON時のみ「ミラーモード中」バッジを表示（全画面でも #prompter 内なので見える）
   $('mirrorBadge').classList.toggle('show', mirrorOn);
 }
 function toggleMirror(){
@@ -1315,15 +1191,17 @@ function toggleMirror(){
 }
 
 /* ============================================================================
- *  イベント結線
+ * イベント結線
  * ========================================================================== */
-$('modeBtn').onclick = () => setMode(!promptMode);
+$('modeBtn_edit').onclick = () => setMode(true);
+$('modeBtn_prompt').onclick = () => setMode(false);
 $('startBtn').onclick = toggleFollow;
 $('pauseBtn').onclick = pauseFollow;
 $('resetBtn').onclick = resetFollow;
 $('mirrorBtn').onclick = toggleMirror;
 $('fsBtn').onclick = toggleFullscreen;
-$('settingsBtn').onclick = () => $('settings').classList.toggle('open');
+$('settingsBtn_edit').onclick = () => $('settings').classList.toggle('open');
+$('settingsBtn_prompt').onclick = () => $('settings').classList.toggle('open');
 
 $('saveBtn').onclick = async () => {
   const name = $('scriptName').value.trim() || ('台本 ' + new Date().toLocaleString('ja-JP'));
@@ -1331,8 +1209,7 @@ $('saveBtn').onclick = async () => {
   if (!text.trim()){ alert('台本が空です。'); return; }
   const id = await dbSave(name, text, currentScriptId);
   currentScriptId = id;
-  await refreshList();
-  $('hintBar').textContent = '「'+name+'」を保存しました';
+  alert('「'+name+'」を保存しました');
 };
 $('newBtn').onclick = () => {
   editArea.value = '';
@@ -1340,31 +1217,35 @@ $('newBtn').onclick = () => {
   currentScriptId = null;
 };
 
-/* ---- スライド関連 ---- */
 $('pickSlidesBtn').onclick = () => $('slideInput').click();
 $('slideInput').addEventListener('change', async (e) => {
   if (e.target.files && e.target.files.length){
     await loadSlideFiles(e.target.files);
-    $('hintBar').textContent = slideFiles.length
-      ? slideFiles.length + ' 枚の画像を読み込みました（ファイル名順）'
-      : '画像の読み込みに失敗しました';
   }
 });
 $('openSlideWinBtn').onclick = openSlideWindow;
 $('testNextBtn').onclick = () => {
-  if (!slideFiles.length){ alert('先に「スライド画像を選択」で画像を読み込んでください。'); return; }
-  // スライド窓が無ければ先に開く（確認しやすいように）
+  if (!slideFiles.length){ alert('先に画像を読み込んでください。'); return; }
   if (!slideWin || slideWin.closed){ openSlideWindow(); }
   manualNextSlide();
 };
-// 本番モード中のスライド手動操作（リスクヘッジ）
 $('slideNextBtn').onclick = manualNextSlide;
 $('slidePrevBtn').onclick = manualPrevSlide;
 
-// 設定系のリスナー
-['fsRange','lhRange','mgRange','guideRange','spdRange','thRange',
+/* ---- 設定イベント（スライダー＋数値入力同期） ---- */
+['fsRange','lhRange','mgRange','guideRange','thRange',
  'voiceChk','fallbackChk'].forEach(id => {
   $(id).addEventListener('input', applySettings);
+});
+$('spdRange').addEventListener('input', (e) => {
+  $('spdInput').value = e.target.value;
+  applySettings();
+});
+$('spdInput').addEventListener('change', (e) => {
+  let val = parseInt(e.target.value, 10);
+  if (isNaN(val) || val < 1) val = 1;
+  $('spdRange').value = val;
+  applySettings();
 });
 $('themeSel').addEventListener('change', e => applyTheme(e.target.value));
 $('guideChk').addEventListener('change', applyGuideVisible);
@@ -1372,7 +1253,6 @@ $('debugChk').addEventListener('change', applyDebug);
 
 /* ---- キーボードショートカット ---- */
 document.addEventListener('keydown', (e) => {
-  // 編集中（テキスト入力中）はショートカット無効
   const tag = (e.target.tagName || '').toLowerCase();
   if (tag === 'textarea' || tag === 'input') return;
 
@@ -1387,33 +1267,29 @@ document.addEventListener('keydown', (e) => {
     scrollBox.scrollTop -= 60;
   } else if (e.code === 'Escape'){
     $('settings').classList.remove('open');
+    if (scriptModal.classList.contains('show')) scriptModal.classList.remove('show');
     if (document.fullscreenElement) document.exitFullscreen?.();
   } else if (e.code === 'BracketRight' || e.code === 'PageDown'){
-    // ] または PageDown：スライドを手動で次へ
     if (promptMode){ e.preventDefault(); manualNextSlide(); }
   } else if (e.code === 'BracketLeft' || e.code === 'PageUp'){
-    // [ または PageUp：スライドを手動で前へ
     if (promptMode){ e.preventDefault(); manualPrevSlide(); }
   }
 });
 
 /* ============================================================================
- *  初期化
+ * 初期化
  * ========================================================================== */
 (async function init(){
   applyTheme('dark');
   applySettings();
   applyGuideVisible();
   applyDebug();
-  // ミラーモードの前回状態を復元
   try { mirrorOn = localStorage.getItem(MIRROR_KEY) === '1'; } catch(_){ mirrorOn = false; }
   applyMirror();
   try {
     await openDB();
-    await refreshList();
   } catch(err){
-    console.error('IndexedDB 初期化エラー', err);
-    $('savedItems').innerHTML = '<div class="hint">IndexedDB が利用できません。</div>';
+    console.warn('IndexedDB 初期化エラー');
   }
 })();
 </script>
